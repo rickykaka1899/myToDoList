@@ -17,9 +17,9 @@
 
 @interface JYHToDoController()
 {
-  UITextView *iTextView;
+//  UITextView *iTextView;
 }
-@property (nonatomic,retain) UITextView *iTextView;
+//@property (nonatomic,retain) UITextView *iTextView;
 
 @end
 
@@ -29,7 +29,7 @@
 @synthesize iTextField;
 @synthesize iToDoVC;
 @synthesize iCacheList;
-@synthesize iTextView;
+//@synthesize iTextView;
 
 - (void) setDefaultList
 {
@@ -74,7 +74,7 @@
         }
       }
     }
-
+    
   }
   [iCacheList retain];
   [iToDoList retain];
@@ -86,7 +86,7 @@
   [iToDoString release];
   [iTextField release];
   [iCacheList release];
-  [iTextView release];
+//  [iTextView release];
   [super dealloc];
 }
 
@@ -100,7 +100,8 @@
   }
   else
   {
-    iTextView.frame = CGRectMake(16, 0, 240, 24);
+    UITextView *iTextView = [[UITextView alloc] initWithFrame:CGRectMake(8, 0, 240, 24)];
+//    iTextView.frame = CGRectMake(16, 0, 240, 24);
     iTextView.text = ((JYHToDoThingVO *)[iToDoList objectAtIndex:indexPath.row]).iTodoStr;
     return [self expandCellTextViewAttributes:iTextView].size.height;
   }
@@ -126,6 +127,7 @@
 }
 
 
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
   if ([iToDoVC.iFirstVO.iId isEqualToString:@"3"])
@@ -143,40 +145,42 @@
   NSString *cellidentifier = @"todocellidentifier";
   UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellidentifier];
   
-
-    if (cell == nil)
-    {
-      cell = [[[ACEExpandableTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellidentifier]autorelease];
-    }
-    cell = (ACEExpandableTextCell *)[tableView expandableTextCellWithId:@"cellId"];
+  
+  if (cell == nil)
+  {
+    cell = [[[ACEExpandableTextCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellidentifier]autorelease];
+  }
+  cell = (ACEExpandableTextCell *)[tableView expandableTextCellWithId:@"cellId"];
   if (indexPath.row == [iToDoList count])
   {
-  ((ACEExpandableTextCell *)cell).textView.placeholder = @"text";
+    ((ACEExpandableTextCell *)cell).textView.placeholder = @"text";
   }
   else
   {
     
-    iTextView= ((ACEExpandableTextCell *)cell).textView;
+    UITextView *iTextView= ((ACEExpandableTextCell *)cell).textView;
     iTextView.text = ((JYHToDoThingVO *)[iToDoList objectAtIndex:indexPath.row]).iTodoStr;
-    iTextView.frame = CGRectMake(16, 0, 240, 24);
+    iTextView.frame = CGRectMake(8, 0, 240, 24);
     iTextView.frame = [self expandCellTextViewAttributes:iTextView];
-    NSString *fini = ((JYHToDoThingVO *)[iToDoList objectAtIndex:indexPath.row]).isFinished;
-       if([fini isEqualToString:@"1"])
-    {
-      cell.selected = YES;
-    }
-    else
-    {
-      cell.selected = NO;
-    }
     UIButton *detailBtn = [[UIButton alloc] initWithFrame:CGRectMake(270, 6, 32, 32)];
     detailBtn.tag = indexPath.row;
     detailBtn.backgroundColor = [UIColor redColor];
     [detailBtn addTarget:self action:@selector(detailAction:) forControlEvents:UIControlEventTouchUpInside];
     [cell addSubview:detailBtn];
     [detailBtn release];
-    [tableView beginUpdates];
-    [tableView endUpdates];
+    if (!iToDoVC.isEditing)
+    {
+      NSString *fini = ((JYHToDoThingVO *)[iToDoList objectAtIndex:indexPath.row]).isFinished;
+      if([fini isEqualToString:@"1"])
+      {
+        cell.selected = YES;
+      }
+      else
+      {
+        cell.selected = NO;
+      }
+    }
+    
   }
   return cell;
 }
@@ -184,8 +188,8 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
   [tableView deselectRowAtIndexPath:indexPath animated:YES];
-//  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-//  cell.selected = YES;
+    //  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    //  cell.selected = YES;
   JYHToDoThingVO *thingVO = [iToDoList objectAtIndex:indexPath.row];
   if ([thingVO.isFinished isEqualToString:@"0"])
   {
@@ -231,17 +235,17 @@
 }
 
 /*
-- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-//  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-//  cell.selected = NO;
-  JYHToDoThingVO *thingVO = [iToDoList objectAtIndex:indexPath.row];
-  thingVO.isFinished = @"0";
-  [iToDoList replaceObjectAtIndex:indexPath.row withObject:thingVO];
-  [self changeStatusOfVO:thingVO withStatus:thingVO.isFinished];
-  [iToDoVC.iTableView reloadData];
-}
-*/
+ - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+ {
+ //  UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+ //  cell.selected = NO;
+ JYHToDoThingVO *thingVO = [iToDoList objectAtIndex:indexPath.row];
+ thingVO.isFinished = @"0";
+ [iToDoList replaceObjectAtIndex:indexPath.row withObject:thingVO];
+ [self changeStatusOfVO:thingVO withStatus:thingVO.isFinished];
+ [iToDoVC.iTableView reloadData];
+ }
+ */
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -268,7 +272,7 @@
   {
     JYHToDoThingVO *deleteVO = [iToDoList objectAtIndex:indexPath.row];
     [iToDoList removeObject:deleteVO];
-//    [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
+      //    [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationRight];
     for (JYHToDoThingVO *vo in iCacheList)
     {
         //单条删除没问题
@@ -423,15 +427,15 @@
 - (CGRect)expandCellTextViewAttributes:(UITextView *)textview
 {
   CGRect textviewFrame = textview.frame;
-//  textview.frame = textviewFrame;
+    //  textview.frame = textviewFrame;
   textview.font = WA_PLACESALEORDER_FONT_KAKU_W3_16;
     //计算固定高度，需要的frame，主要关注与宽度
-//  CGRect textFrame = [textview.text boundingRectWithSize:textviewFrame.size
-//                                                options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin
-//                                             attributes:textAttri
-//                                                context:nil];
+    //  CGRect textFrame = [textview.text boundingRectWithSize:textviewFrame.size
+    //                                                options:NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin
+    //                                             attributes:textAttri
+    //                                                context:nil];
   CGSize textSize = [textview sizeThatFits:CGSizeMake(textviewFrame.size.width, FLT_MAX)];
-     //新的高度翻倍
+    //新的高度翻倍
   textviewFrame.size.height = textSize.height;
   return textviewFrame;
 }

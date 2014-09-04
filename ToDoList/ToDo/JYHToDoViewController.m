@@ -99,10 +99,12 @@
   {
     [iRightBtn setTitle:@"编辑" forState:UIControlStateNormal];
     isEditing = NO;
+//    [iTableView setEditing:NO animated:YES];
   }
   else
   {
     [iRightBtn setTitle:@"完成" forState:UIControlStateNormal];
+//    [iTableView setEditing:YES animated:YES];
     isEditing = YES;
   }
 }
